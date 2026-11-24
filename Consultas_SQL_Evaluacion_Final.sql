@@ -1,0 +1,77 @@
+USE Evaluacion_Final_Data_Analytics;
+GO
+
+SELECT COUNT(*) AS Total_Filas
+FROM dbo.Ventas;
+USE Evaluacion_Final_Data_Analytics;
+GO
+
+SELECT
+    MAX(ORDERDATE) AS Ultima_Fecha_Venta
+FROM dbo.Ventas;
+USE Evaluacion_Final_Data_Analytics;
+GO
+
+SELECT
+    ORDERDATE,
+    ORDERNUMBER,
+    CUSTOMERNAME,
+    PRODUCTCODE,
+    QUANTITYORDERED,
+    SALES
+FROM dbo.Ventas
+WHERE ORDERDATE >= DATEADD(DAY, -30, (SELECT MAX(ORDERDATE) FROM dbo.Ventas))
+  AND ORDERDATE <= (SELECT MAX(ORDERDATE) FROM dbo.Ventas)
+ORDER BY ORDERDATE DESC;
+SELECT
+    COUNT(*) AS Total_Registros,
+    COUNT(DISTINCT ORDERNUMBER) AS Cantidad_Pedidos,
+    COUNT(DISTINCT CUSTOMERNAME) AS Clientes_Distintos,
+    SUM(QUANTITYORDERED) AS Unidades_Vendidas,
+    SUM(SALES) AS Facturacion_Total,
+    AVG(SALES) AS Promedio_Venta
+FROM dbo.Ventas
+WHERE ORDERDATE >= DATEADD(DAY, -30, (SELECT MAX(ORDERDATE) FROM dbo.Ventas))
+  AND ORDERDATE <= (SELECT MAX(ORDERDATE) FROM dbo.Ventas);
+  SELECT TOP 5
+    PRODUCTCODE AS Codigo_Producto,
+    SUM(QUANTITYORDERED) AS Unidades_Vendidas,
+    SUM(SALES) AS Facturacion_Total
+FROM dbo.Ventas
+WHERE ORDERDATE >= DATEADD(DAY, -30, (SELECT MAX(ORDERDATE) FROM dbo.Ventas))
+  AND ORDERDATE <= (SELECT MAX(ORDERDATE) FROM dbo.Ventas)
+GROUP BY PRODUCTCODE
+ORDER BY Facturacion_Total DESC;
+SELECT
+    COUNTRY AS Pais,
+    COUNT(DISTINCT ORDERNUMBER) AS Cantidad_Pedidos,
+    SUM(SALES) AS Facturacion_Total
+FROM dbo.Ventas
+WHERE ORDERDATE >= DATEADD(DAY, -30, (SELECT MAX(ORDERDATE) FROM dbo.Ventas))
+  AND ORDERDATE <= (SELECT MAX(ORDERDATE) FROM dbo.Ventas)
+GROUP BY COUNTRY
+ORDER BY Facturacion_Total DESC;
+SELECT
+    COUNT(DISTINCT CUSTOMERNAME) AS Total_Clientes,
+    COUNT(DISTINCT PRODUCTCODE) AS Total_Productos,
+    COUNT(DISTINCT ORDERNUMBER) AS Total_Pedidos,
+    COUNT(*) AS Total_Detalle_Ventas
+FROM dbo.Ventas;
+SELECT TOP 10
+    CUSTOMERNAME AS Cliente,
+    COUNT(DISTINCT ORDERNUMBER) AS Cantidad_Pedidos,
+    SUM(SALES) AS Facturacion_Total
+FROM dbo.Ventas
+GROUP BY CUSTOMERNAME
+ORDER BY Facturacion_Total DESC;
+SELECT TOP 10
+    ORDERNUMBER AS Numero_Pedido,
+    ORDERDATE AS Fecha,
+    CUSTOMERNAME AS Cliente,
+    PRODUCTCODE AS Codigo_Producto,
+    PRODUCTLINE AS Linea_Producto,
+    QUANTITYORDERED AS Cantidad,
+    PRICEEACH AS Precio_Unitario,
+    SALES AS Facturacion
+FROM dbo.Ventas
+ORDER BY ORDERDATE DESC;
